@@ -42,10 +42,14 @@
     "research_context": "Quantum information and many-body physics group. Research lines: (1) multipartite entanglement characterization and low-complexity representations (entanglement witnesses, classical shadows, tensor networks); (2) 1D dissipative/open quantum systems and noise-resilient dynamics simulation (Lindblad dynamics, matrix product operators, quantum trajectories, error mitigation); (3) 2D many-body systems and lattice gauge theory co-simulation (PEPS, Schwinger model, gauge-matter coupling, Hamiltonian simulation); (4) quantum optimization algorithms in open systems (dissipative/open-system QAOA, quantum annealing under noise, quantum optimal control); (5) cold atom / neutral atom quantum computing and simulation (Rydberg atoms and blockade gates, optical lattices, optical tweezers, atom arrays, quantum gas microscopes)."
   },
   "scoring_settings": {
-    "include_all_in_report": true
+    "include_all_in_report": true,
+    "passing_score_formula": {
+      "base_score": 3.0,
+      "weight_coefficient": 0
+    }
   },
   "daily_research": {
-    "enable_deep_analysis": true,
+    "enable_deep_analysis": false,
     "max_papers_per_run": 15
   },
   "report_settings": {
