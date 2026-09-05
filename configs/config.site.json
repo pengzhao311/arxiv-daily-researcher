@@ -5,7 +5,9 @@
       "cond-mat.str-el",
       "cond-mat.stat-mech",
       "hep-lat",
-      "hep-th"
+      "hep-th",
+      "cond-mat.quant-gas",
+      "physics.atom-ph"
     ]
   },
   "keywords": {
@@ -27,11 +29,17 @@
         "quantum optimization under noise", "noisy variational quantum algorithms",
         "open-system QAOA", "dissipative QAOA", "quantum annealing open systems",
         "noise-assisted optimization", "Lindbladian optimization", "quantum optimal control",
-        "dissipative state preparation"
+        "dissipative state preparation",
+        "cold atom", "cold atoms", "ultracold atom", "ultracold atoms",
+        "neutral atom", "neutral atoms", "neutral atom quantum computing",
+        "Rydberg atom", "Rydberg atoms", "Rydberg blockade", "Rydberg gate",
+        "optical lattice", "optical lattices", "optical tweezer", "optical tweezers",
+        "atom array", "atom arrays", "quantum gas microscope",
+        "Bose-Einstein condensate", "quantum gas"
       ]
     },
     "enable_reference_extraction": true,
-    "research_context": "Quantum information and many-body physics group. Research lines: (1) multipartite entanglement characterization and low-complexity representations (entanglement witnesses, classical shadows, tensor networks); (2) 1D dissipative/open quantum systems and noise-resilient dynamics simulation (Lindblad dynamics, matrix product operators, quantum trajectories, error mitigation); (3) 2D many-body systems and lattice gauge theory co-simulation (PEPS, Schwinger model, gauge-matter coupling, Hamiltonian simulation); (4) quantum optimization algorithms in open systems (dissipative/open-system QAOA, quantum annealing under noise, quantum optimal control)."
+    "research_context": "Quantum information and many-body physics group. Research lines: (1) multipartite entanglement characterization and low-complexity representations (entanglement witnesses, classical shadows, tensor networks); (2) 1D dissipative/open quantum systems and noise-resilient dynamics simulation (Lindblad dynamics, matrix product operators, quantum trajectories, error mitigation); (3) 2D many-body systems and lattice gauge theory co-simulation (PEPS, Schwinger model, gauge-matter coupling, Hamiltonian simulation); (4) quantum optimization algorithms in open systems (dissipative/open-system QAOA, quantum annealing under noise, quantum optimal control); (5) cold atom / neutral atom quantum computing and simulation (Rydberg atoms and blockade gates, optical lattices, optical tweezers, atom arrays, quantum gas microscopes)."
   },
   "scoring_settings": {
     "include_all_in_report": true
