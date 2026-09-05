@@ -35,27 +35,9 @@ jobs:
           CHEAP_LLM__API_KEY=${{ secrets.CHEAP_LLM_API_KEY }}
           CHEAP_LLM__BASE_URL=${{ secrets.CHEAP_LLM_BASE_URL }}
           CHEAP_LLM__MODEL_NAME=${{ secrets.CHEAP_LLM_MODEL_NAME }}
-          CHEAP_LLM__TEMPERATURE=${{ secrets.CHEAP_LLM_TEMPERATURE }}
           SMART_LLM__API_KEY=${{ secrets.SMART_LLM_API_KEY }}
           SMART_LLM__BASE_URL=${{ secrets.SMART_LLM_BASE_URL }}
           SMART_LLM__MODEL_NAME=${{ secrets.SMART_LLM_MODEL_NAME }}
-          SMART_LLM__TEMPERATURE=${{ secrets.SMART_LLM_TEMPERATURE }}
-          OPENALEX_API_KEY=${{ secrets.OPENALEX_API_KEY }}
-          SEMANTIC_SCHOLAR_API_KEY=${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
-          ENABLE_NOTIFICATIONS=${{ secrets.ENABLE_NOTIFICATIONS }}
-          SMTP_HOST=${{ secrets.SMTP_HOST }}
-          SMTP_PORT=${{ secrets.SMTP_PORT }}
-          SMTP_USER=${{ secrets.SMTP_USER }}
-          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
-          SMTP_FROM=${{ secrets.SMTP_FROM }}
-          SMTP_TO=${{ secrets.SMTP_TO }}
-          WECHAT_WEBHOOK_URL=${{ secrets.WECHAT_WEBHOOK_URL }}
-          DINGTALK_WEBHOOK_URL=${{ secrets.DINGTALK_WEBHOOK_URL }}
-          DINGTALK_SECRET=${{ secrets.DINGTALK_SECRET }}
-          TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
-          SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
-          GENERIC_WEBHOOK_URL=${{ secrets.GENERIC_WEBHOOK_URL }}
           ENVEOF
 
       - name: Restore previous data
