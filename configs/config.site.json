@@ -38,7 +38,7 @@
   },
   "daily_research": {
     "enable_deep_analysis": true,
-    "max_papers_per_run": 0
+    "max_papers_per_run": 150
   },
   "report_settings": {
     "enable_html_report": true,
