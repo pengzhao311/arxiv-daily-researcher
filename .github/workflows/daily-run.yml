@@ -1,9 +1,10 @@
 name: ArXiv Daily Research
 
 on:
-  # 每天 UTC 00:00 = 北京时间 08:00（配置完 Secrets 后取消注释启用）
+  # 每天北京时间 00:00（DeepSeek 低峰半价时段）
   schedule:
     - cron: '0 0 * * *'
+      timezone: 'Asia/Shanghai'
   workflow_dispatch:
 
 concurrency:
