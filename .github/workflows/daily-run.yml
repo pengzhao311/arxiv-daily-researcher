@@ -1,18 +1,11 @@
 name: ArXiv Daily Research
 
 on:
-  # ⚠️  定时触发默认关闭，防止 Fork 后未配置 Secrets 就自动运行报错。
-  # 完成 Secrets 配置后，取消下方注释即可开启每日自动运行。
-  #
-  # schedule:
-  #   # 每天 UTC 00:00 运行 (= 北京时间 08:00)
-  #   - cron: '0 0 * * *'
-
-  # 支持手动触发。v4.2 固定回看最近 3 天；更早日期请使用过去日报队列。
+  # 每天 UTC 00:00 = 北京时间 08:00（配置完 Secrets 后取消注释启用）
+  schedule:
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
-# GitHub Actions 的 SQLite 状态缓存是同一个逻辑数据源；日常与趋势任务不能
-# 并发恢复和保存它，否则可能各自基于不同快照运行。
 concurrency:
   group: research-state
   cancel-in-progress: false
@@ -20,8 +13,6 @@ concurrency:
 jobs:
   research:
     runs-on: ubuntu-latest
-    # A complete time-window scan can legitimately take longer when upstream
-    # services rate-limit requests.  Do not turn this into a paper-count cap.
     timeout-minutes: 360
 
     steps:
@@ -88,6 +79,16 @@ jobs:
                    data/keywords data/daily_research data/run \
                    data/reference_pdfs data/downloaded_pdfs logs
 
+      - name: Prepare runtime config
+        run: |
+          mkdir -p runtime
+          if [ -f configs/config.site.json ]; then
+            cp configs/config.site.json runtime/config.json
+            echo "Using configs/config.site.json"
+          else
+            echo "No config.site.json; using built-in defaults"
+          fi
+
       - name: Run research pipeline
         run: python main.py
         env:
@@ -102,6 +103,34 @@ jobs:
             data/reports/
             logs/
           retention-days: 30
+
+      - name: Publish reports to site (source branch)
+        if: always()
+        env:
+          PAGES_PAT: ${{ secrets.PAGES_PAT }}
+        run: |
+          set -euo pipefail
+          SITE=$(mktemp -d)
+          git clone --depth 1 --branch source \
+            "https://x-access-token:${PAGES_PAT}@github.com/pengzhao311/pengzhao311.github.io.git" "$SITE"
+
+          mkdir -p "$SITE/source/arxiv/reports"
+          if [ -d data/reports/daily_research/html ]; then
+            cp -a data/reports/daily_research/html/. "$SITE/source/arxiv/reports/" || true
+          fi
+
+          python scripts/build_site_index.py "$SITE/source/arxiv"
+
+          cd "$SITE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No new reports."
+          else
+            git commit -m "Update arXiv reports: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push origin source
+          fi
 
       - name: Save data for next run
         if: always()

@@ -1,0 +1,53 @@
+{
+  "target_domains": {
+    "domains": [
+      "quant-ph",
+      "cond-mat.str-el",
+      "cond-mat.stat-mech",
+      "hep-lat",
+      "hep-th"
+    ]
+  },
+  "keywords": {
+    "primary_keywords": {
+      "weight": 1.0,
+      "keywords": [
+        "multipartite entanglement", "many-body entanglement", "entanglement witness",
+        "entanglement measure", "entanglement entropy", "operator entanglement",
+        "classical shadows", "randomized measurements", "tensor networks",
+        "open quantum systems", "dissipative quantum dynamics", "Lindblad dynamics",
+        "Lindblad simulation", "noise-resilient quantum simulation", "dissipative many-body systems",
+        "non-Hermitian dynamics", "quantum trajectories", "matrix product operators",
+        "variational quantum simulation", "error mitigation", "Liouvillian simulation",
+        "2D quantum simulation", "two-dimensional many-body", "PEPS",
+        "tensor network simulation", "lattice gauge theory", "quantum simulation of gauge theories",
+        "lattice gauge model", "gauge invariance", "Gauss law", "Hamiltonian simulation",
+        "Schwinger model", "Z2 gauge theory", "U(1) lattice gauge theory", "quantum link model",
+        "gauge-matter coupling", "open-system quantum optimization", "dissipative quantum optimization",
+        "quantum optimization under noise", "noisy variational quantum algorithms",
+        "open-system QAOA", "dissipative QAOA", "quantum annealing open systems",
+        "noise-assisted optimization", "Lindbladian optimization", "quantum optimal control",
+        "dissipative state preparation"
+      ]
+    },
+    "enable_reference_extraction": true,
+    "research_context": "Quantum information and many-body physics group. Research lines: (1) multipartite entanglement characterization and low-complexity representations (entanglement witnesses, classical shadows, tensor networks); (2) 1D dissipative/open quantum systems and noise-resilient dynamics simulation (Lindblad dynamics, matrix product operators, quantum trajectories, error mitigation); (3) 2D many-body systems and lattice gauge theory co-simulation (PEPS, Schwinger model, gauge-matter coupling, Hamiltonian simulation); (4) quantum optimization algorithms in open systems (dissipative/open-system QAOA, quantum annealing under noise, quantum optimal control)."
+  },
+  "scoring_settings": {
+    "include_all_in_report": true
+  },
+  "daily_research": {
+    "enable_deep_analysis": true,
+    "max_papers_per_run": 5
+  },
+  "report_settings": {
+    "enable_html_report": true,
+    "enable_markdown_report": true
+  },
+  "notifications": {
+    "enabled": false
+  },
+  "webdav": {
+    "enabled": false
+  }
+}
