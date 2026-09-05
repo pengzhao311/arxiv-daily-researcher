@@ -420,3 +420,19 @@ summary:hover {
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
     --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
+
+/* ── 暗色覆写：修正硬编码的浅色背景与深色文字 ── */
+.tldr {
+    background: #333333;
+    border-left: 3px solid #3b82f6;
+    color: #e5e7eb;
+}
+.tldr-meta { color: #60a5fa; }
+.tldr-body { color: #e5e7eb; }
+.abstract-cn { color: #e5e7eb; }
+.field-label { color: #9ca3af; }
+.analysis-content,
+.analysis-content ul,
+.analysis-content li { color: #e5e7eb; }
+.model-badge { color: #93c5fd; background: #1e3a8a; border: 1px solid #3b82f6; }
+.trend-card-title { color: #e5e7eb; border-bottom: 1px solid #3f3f3f; }
