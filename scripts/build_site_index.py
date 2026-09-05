@@ -39,26 +39,19 @@ def main() -> int:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>论文动态</title>
 <style>
- :root {{ color-scheme: light dark; }}
  body {{ font-family: -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
         max-width: 920px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6;
-        background:#fff; color:#1a1a1a; }}
+        background:#222; color:#e5e7eb; }}
  h1 {{ font-size:1.5rem; }}
- .meta {{ color:#777; font-size:.85rem; margin-bottom:1rem; }}
+ .meta {{ color:#9ca3af; font-size:.85rem; margin-bottom:1rem; }}
  ul {{ list-style:none; padding:0; }}
- li {{ padding:.55rem .25rem; border-bottom:1px solid #eee; font-size:.95rem; }}
+ li {{ padding:.55rem .25rem; border-bottom:1px solid #3f3f3f; font-size:.95rem; }}
  li a {{ word-break:break-all; }}
- .d {{ display:inline-block; min-width:6.5rem; color:#0b5cad; font-variant-numeric:tabular-nums; }}
- .s {{ display:inline-block; min-width:4rem; color:#555; }}
- a {{ color:#0b5cad; text-decoration:none; }}
+ .d {{ display:inline-block; min-width:6.5rem; color:#60a5fa; font-variant-numeric:tabular-nums; }}
+ .s {{ display:inline-block; min-width:4rem; color:#9ca3af; }}
+ a {{ color:#60a5fa; text-decoration:none; }}
  a:hover {{ text-decoration:underline; }}
  .back {{ margin-top:1.2rem; }}
- @media (prefers-color-scheme: dark) {{
-   body {{ background:#222; color:#e5e7eb; }}
-   a, .d {{ color:#60a5fa; }}
-   .s, .meta {{ color:#9ca3af; }}
-   li {{ border-bottom-color:#3f3f3f; }}
- }}
 </style>
 </head>
 <body>
