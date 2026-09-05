@@ -1,13 +1,7 @@
 {
   "target_domains": {
     "domains": [
-      "quant-ph",
-      "cond-mat.str-el",
-      "cond-mat.stat-mech",
-      "hep-lat",
-      "hep-th",
-      "cond-mat.quant-gas",
-      "physics.atom-ph"
+      "quant-ph"
     ]
   },
   "keywords": {
