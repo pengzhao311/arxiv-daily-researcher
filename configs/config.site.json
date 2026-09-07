@@ -15,8 +15,7 @@
         "Hamiltonian simulation", "Schwinger model",
         "quantum optimization", "QAOA", "quantum annealing", "quantum optimal control",
         "variational quantum algorithm", "quantum noise",
-        "cold atom", "neutral atom", "Rydberg", "optical lattice",
-        "optical tweezer", "atom array", "quantum gas"
+        "cold atom", "neutral atom", "Rydberg", "optical lattice"
       ]
     },
     "enable_reference_extraction": true,
