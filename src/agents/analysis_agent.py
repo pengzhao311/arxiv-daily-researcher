@@ -985,7 +985,7 @@ class AnalysisAgent:
 输出格式: JSON对象，包含以下字段:
 {{
   "keyword_scores": {{"关键词1": 8.0, "关键词2": 5.0, ...}},
-  "reasoning": "详细的评分理由和分析",
+  "reasoning": "一句话简述论文与哪些关键词相关",
   "tldr": "一句话总结论文研究的核心问题和主要结果",
   "extracted_keywords": ["keyword1", "keyword2", "keyword3", ...]
 }}
@@ -994,7 +994,7 @@ class AnalysisAgent:
 - keyword_scores 必须包含所有给定的关键词
 - keyword_scores 必须且只能包含给定的所有关键词，键名必须逐字一致
 - 每个关键词的评分范围: 0-{max_score:g}
-- reasoning 应简明扼要地说明论文与关键词的相关性
+- reasoning 只需一句话（不超过 60 字），不要展开详细分析
 - tldr 应该是一句完整的话，包含研究问题和主要结果
 - extracted_keywords 应提取5-8个最能代表论文内容的关键词或短语
 """
