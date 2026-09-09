@@ -8,14 +8,18 @@
     "primary_keywords": {
       "weight": 1.0,
       "keywords": [
+        "quantum computing", "quantum simulation", "analog quantum simulation",
+        "Hamiltonian simulation", "quantum many-body",
         "multipartite entanglement", "entanglement entropy",
-        "classical shadows", "tensor networks", "open quantum systems",
-        "Lindblad", "dissipative", "error mitigation", "quantum trajectories",
-        "non-Hermitian", "lattice gauge theory", "PEPS", "quantum simulation",
-        "Hamiltonian simulation", "Schwinger model",
-        "quantum optimization", "QAOA", "quantum annealing", "quantum optimal control",
-        "variational quantum algorithm", "quantum noise",
-        "cold atom", "neutral atom", "Rydberg", "optical lattice"
+        "classical shadows", "tensor networks",
+        "open quantum systems", "Lindblad equation", "Liouvillian gap",
+        "quantum trajectories", "non-Hermitian", "quantum noise",
+        "neutral atom", "Rydberg atom", "Rydberg array",
+        "superconducting qubit", "trapped ion",
+        "quantum error correction", "error mitigation",
+        "variational quantum algorithm", "VQE", "QAOA", "QUBO",
+        "quantum optimization", "quantum annealing", "barren plateaus",
+        "quantum machine learning"
       ]
     },
     "enable_reference_extraction": true,
