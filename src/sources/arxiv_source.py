@@ -9,6 +9,8 @@ ArXiv 论文数据源
 
 import arxiv
 import logging
+import math
+from email.utils import parsedate_to_datetime
 import re
 import signal
 import time
@@ -137,7 +139,7 @@ class _timeout_guard:
 
 def _is_rate_limit_error(exc: BaseException) -> bool:
     """识别 arXiv 限流（429 / Too Many Requests）。"""
-    if getattr(exc, "code", None) == 429:
+    if getattr(exc, "status", getattr(exc, "code", None)) == 429:
         return True
     error_msg = str(exc)
     return "429" in error_msg or "Too Many Requests" in error_msg
@@ -158,7 +160,15 @@ def _retry_after_seconds(exc: BaseException) -> Optional[int]:
             try:
                 return max(1, int(str(raw).strip()))
             except ValueError:
-                continue
+                try:
+                    deadline = parsedate_to_datetime(str(raw).strip())
+                    if deadline.tzinfo is None:
+                        deadline = deadline.replace(tzinfo=timezone.utc)
+                    return max(1, math.ceil(
+                        (deadline - datetime.now(timezone.utc)).total_seconds()
+                    ))
+                except (ValueError, TypeError, OverflowError):
+                    continue
     return None
 
 
@@ -167,7 +177,7 @@ def _arxiv_retry_wait(exc: BaseException, retry_count: int) -> int:
 
     - 超时/一般错误（含 503 服务端错误）：线性 30s×n，封顶 90s
     - 速率限制：指数 180s×2^(n-1)，封顶 900s
-    - 响应头带 Retry-After 且更长时，优先遵从（封顶 1800s）
+    - 响应头带 Retry-After 且更长时，优先遵从（不提前重试）
     """
     if isinstance(exc, _ArxivTimeoutError):
         wait = min(30 * retry_count, 90)
@@ -177,8 +187,34 @@ def _arxiv_retry_wait(exc: BaseException, retry_count: int) -> int:
         wait = min(30 * retry_count, 90)
     retry_after = _retry_after_seconds(exc)
     if retry_after is not None:
-        wait = max(wait, min(retry_after, 1800))
+        wait = max(wait, retry_after)
     return wait
+
+
+class _ArxivClient(arxiv.Client):
+    """Keep HTTP retry hints; the source owns the retry/cooldown policy."""
+
+    def __init__(self):
+        super().__init__(page_size=100, delay_seconds=6.0, num_retries=0)
+        self._response_headers = None
+        self._session.hooks["response"].append(self._remember_headers)
+
+    def _remember_headers(self, response, **kwargs):
+        self._response_headers = response.headers.copy()
+        return response
+
+    def _parse_feed(self, url, first_page=True, _try_index=0):
+        self._response_headers = None
+        try:
+            return super()._parse_feed(url, first_page, _try_index)
+        except arxiv.HTTPError as exc:
+            exc.headers = self._response_headers
+            logger.warning(
+                "[ArXiv] HTTP %s; Retry-After=%s",
+                exc.status,
+                (exc.headers or {}).get("Retry-After", "absent"),
+            )
+            raise
 
 
 class ArxivSource(BasePaperSource):
@@ -218,7 +254,7 @@ class ArxivSource(BasePaperSource):
         )
         # arXiv API 对分页请求有严格的速率要求。max_results 只保留用于兼容旧配置，
         # 日报查询使用 max_results=None，不能因为候选数量达到配置值而漏掉论文。
-        self.client = arxiv.Client(page_size=100, delay_seconds=6.0, num_retries=3)
+        self.client = _ArxivClient()
 
         # 注入代理配置到 arxiv.Client 的内部 requests.Session
         if proxy_dict:
@@ -452,6 +488,8 @@ class ArxivSource(BasePaperSource):
             domain_failed = False
             last_error_msg = ""
 
+            # Only reuse fully completed queries within this fixed scan window.
+            completed_queries = {}
             while retry_count <= max_retries:
                 try:
                     domain_papers = {}
@@ -462,13 +500,15 @@ class ArxivSource(BasePaperSource):
                     active_query_kind = None
                     for query_kind, search, boundary_field in searches:
                         active_query_kind = query_kind
-                        domain_receipt["queries"][query_kind]["attempts"] += 1
-                        query_results, query_receipt = self._fetch_query_results(
-                            search,
-                            cutoff_date,
-                            boundary_field,
-                            fetch_timeout_seconds,
-                        )
+                        if query_kind not in completed_queries:
+                            domain_receipt["queries"][query_kind]["attempts"] += 1
+                            completed_queries[query_kind] = self._fetch_query_results(
+                                search,
+                                cutoff_date,
+                                boundary_field,
+                                fetch_timeout_seconds,
+                            )
+                        query_results, query_receipt = completed_queries[query_kind]
                         domain_receipt["queries"][query_kind].update(query_receipt)
                         domain_receipt["queries"][query_kind]["error"] = None
                         for result in query_results:

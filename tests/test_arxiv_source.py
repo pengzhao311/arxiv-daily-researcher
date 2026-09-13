@@ -475,11 +475,11 @@ class ArxivRetryBackoffTests(unittest.TestCase):
         # 响应头要求 120s，比线性退避的 30s 更长 → 遵从响应头
         self.assertEqual(_arxiv_retry_wait(exc, 1), 120)
 
-    def test_retry_after_is_capped(self):
+    def test_retry_after_is_not_shortened(self):
         from sources.arxiv_source import _arxiv_retry_wait
 
         exc = _http_error(429, "Too Many Requests", retry_after=3600)
-        self.assertEqual(_arxiv_retry_wait(exc, 1), 1800)
+        self.assertEqual(_arxiv_retry_wait(exc, 1), 3600)
 
     def test_missing_retry_after_returns_none(self):
         from sources.arxiv_source import _retry_after_seconds
@@ -490,3 +490,55 @@ class ArxivRetryBackoffTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ArxivRecoveryTests(unittest.TestCase):
+    def test_real_client_preserves_retry_header_without_inner_retries(self):
+        import requests
+        from sources.arxiv_source import _ArxivClient, _arxiv_retry_wait
+
+        client = _ArxivClient()
+        response = requests.Response()
+        response.status_code = 429
+        response.headers["Retry-After"] = "3600"
+        response._content = b"Too Many Requests"
+        with patch("requests.adapters.HTTPAdapter.send", return_value=response) as send:
+            with self.assertRaises(arxiv.HTTPError) as caught:
+                list(client.results(arxiv.Search(query="cat:quant-ph")))
+        self.assertEqual(send.call_count, 1)
+        self.assertEqual(_arxiv_retry_wait(caught.exception, 1), 3600)
+
+    def test_http_date_retry_after(self):
+        from email.utils import format_datetime
+        from sources.arxiv_source import _retry_after_seconds
+
+        deadline = datetime.now(timezone.utc) + timedelta(seconds=600)
+        exc = _http_error(429, "Too Many Requests", format_datetime(deadline))
+        self.assertTrue(599 <= _retry_after_seconds(exc) <= 600)
+
+    def test_completed_query_is_reused_after_second_query_failure(self):
+        now = datetime.now(timezone.utc)
+        paper = _FakeResult("2609.00001v1", now, now)
+        calls = []
+
+        class Client:
+            def results(self, search):
+                calls.append(search.sort_by)
+                if len(calls) == 2:
+                    raise arxiv.HTTPError("https://export.arxiv.org/api/query", 0, 429)
+                return iter([paper])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            source = ArxivSource(Path(tmp), load_legacy_history=False)
+            source.client = Client()
+            receipts = []
+            with patch("sources.arxiv_source.time.sleep") as sleep:
+                papers = source.fetch_papers(
+                    3, ["quant-ph"], scan_receipt_callback=receipts.append,
+                )
+            sleep.assert_called_once_with(180)
+        self.assertEqual(len(papers), 1)
+        self.assertEqual(calls, [arxiv.SortCriterion.SubmittedDate,
+                                 arxiv.SortCriterion.LastUpdatedDate,
+                                 arxiv.SortCriterion.LastUpdatedDate])
+        self.assertEqual(receipts[0]["domain_receipts"][0]["status"], "succeeded")

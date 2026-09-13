@@ -448,6 +448,8 @@ The root Compose pulls released GHCR images for reproducible user deployment. `t
 
 </details>
 
+When arXiv returns HTTP 429, short retries inside the client library are disabled. The source retries after 180, 360, 720, 900, and 900 seconds, honoring a longer server `Retry-After` value in seconds or HTTP-date form. Completed queries are reused within the current scan; a failed query restarts from the beginning. Exhausted retries fail the task explicitly instead of treating missing results as zero papers. If rate limiting persists, wait for service recovery or move fetching to your own execution environment in accordance with arXiv policies. These mechanisms cannot guarantee upstream availability.
+
 <details>
 <summary><b>What should I do after LLM timeouts, 429s, or partially failed papers?</b></summary>
 
