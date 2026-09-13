@@ -217,7 +217,7 @@ class ArxivFetchTests(unittest.TestCase):
         self.assertEqual("failed", receipts[0]["status"])
         self.assertEqual("failed", domain["status"])
         self.assertIn("upstream unavailable", domain["error"])
-        self.assertEqual(4, domain["queries"]["submitted"]["attempts"])
+        self.assertEqual(6, domain["queries"]["submitted"]["attempts"])
 
     def test_scan_receipt_persistence_callback_failure_fails_closed(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -449,10 +449,10 @@ class ArxivRetryBackoffTests(unittest.TestCase):
 
         exc = _http_error(429, "Too Many Requests")
         self.assertTrue(_is_rate_limit_error(exc))
-        self.assertEqual(_arxiv_retry_wait(exc, 1), 60)
-        self.assertEqual(_arxiv_retry_wait(exc, 2), 120)
-        self.assertEqual(_arxiv_retry_wait(exc, 3), 240)
-        self.assertEqual(_arxiv_retry_wait(exc, 9), 480)
+        self.assertEqual(_arxiv_retry_wait(exc, 1), 180)
+        self.assertEqual(_arxiv_retry_wait(exc, 2), 360)
+        self.assertEqual(_arxiv_retry_wait(exc, 3), 720)
+        self.assertEqual(_arxiv_retry_wait(exc, 9), 900)
 
     def test_rate_limit_detection_accepts_plain_messages(self):
         from sources.arxiv_source import _is_rate_limit_error
@@ -479,7 +479,7 @@ class ArxivRetryBackoffTests(unittest.TestCase):
         from sources.arxiv_source import _arxiv_retry_wait
 
         exc = _http_error(429, "Too Many Requests", retry_after=3600)
-        self.assertEqual(_arxiv_retry_wait(exc, 1), 600)
+        self.assertEqual(_arxiv_retry_wait(exc, 1), 1800)
 
     def test_missing_retry_after_returns_none(self):
         from sources.arxiv_source import _retry_after_seconds

@@ -166,18 +166,18 @@ def _arxiv_retry_wait(exc: BaseException, retry_count: int) -> int:
     """按错误类别计算下一次重试前的等待秒数（含 Retry-After 遵从）。
 
     - 超时/一般错误（含 503 服务端错误）：线性 30s×n，封顶 90s
-    - 速率限制：指数 60s×2^(n-1)，封顶 480s
-    - 响应头带 Retry-After 且更长时，优先遵从（封顶 600s）
+    - 速率限制：指数 180s×2^(n-1)，封顶 900s
+    - 响应头带 Retry-After 且更长时，优先遵从（封顶 1800s）
     """
     if isinstance(exc, _ArxivTimeoutError):
         wait = min(30 * retry_count, 90)
     elif _is_rate_limit_error(exc):
-        wait = min(60 * (2 ** (retry_count - 1)), 480)
+        wait = min(180 * (2 ** (retry_count - 1)), 900)
     else:
         wait = min(30 * retry_count, 90)
     retry_after = _retry_after_seconds(exc)
     if retry_after is not None:
-        wait = max(wait, min(retry_after, 600))
+        wait = max(wait, min(retry_after, 1800))
     return wait
 
 
@@ -447,7 +447,7 @@ class ArxivSource(BasePaperSource):
             domain_receipts.append(domain_receipt)
 
             # 添加重试机制
-            max_retries = 3
+            max_retries = 5
             retry_count = 0
             domain_failed = False
             last_error_msg = ""
