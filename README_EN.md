@@ -136,6 +136,15 @@ SMART_LLM__BASE_URL=https://api.openai.com/v1
 SMART_LLM__MODEL_NAME=gpt-4o
 ~~~
 
+If you use DeepSeek, set these values instead:
+
+~~~env
+CHEAP_LLM__BASE_URL=https://api.deepseek.com
+CHEAP_LLM__MODEL_NAME=deepseek-flash
+SMART_LLM__BASE_URL=https://api.deepseek.com
+SMART_LLM__MODEL_NAME=deepseek-v4-pro
+~~~
+
 The live configuration is Git-ignored at `runtime/config.json`; `configs/config.example.json` is the tracked example. A first deployment can create it from the WebUI or the setup wizard.
 
 When upgrading a source deployment from v4.1 or earlier, run this once if `configs/config.json` still exists:

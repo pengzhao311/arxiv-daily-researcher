@@ -136,6 +136,15 @@ SMART_LLM__BASE_URL=https://api.openai.com/v1
 SMART_LLM__MODEL_NAME=gpt-4o
 ~~~
 
+如果使用 DeepSeek，把 LLM 的 base_url 和 model 改为：
+
+~~~env
+CHEAP_LLM__BASE_URL=https://api.deepseek.com
+CHEAP_LLM__MODEL_NAME=deepseek-flash
+SMART_LLM__BASE_URL=https://api.deepseek.com
+SMART_LLM__MODEL_NAME=deepseek-v4-pro
+~~~
+
 运行配置位于 Git 忽略的 `runtime/config.json`，示例文件为 `configs/config.example.json`。首次部署可在 WebUI 或配置向导中创建运行配置。
 
 从 v4.1 或更早源码部署升级时，如 `configs/config.json` 仍存在，请先执行一次：

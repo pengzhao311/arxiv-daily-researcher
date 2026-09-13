@@ -233,9 +233,9 @@ LLM_PROVIDERS = {
         "smart_model": "gpt-4o",
     },
     "DeepSeek": {
-        "base_url": "https://api.deepseek.com/v1",
-        "cheap_model": "deepseek-chat",
-        "smart_model": "deepseek-chat",
+        "base_url": "https://api.deepseek.com",
+        "cheap_model": "deepseek-flash",
+        "smart_model": "deepseek-v4-pro",
     },
     "Ollama (Local)": {
         "base_url": "http://127.0.0.1:11434/v1",
