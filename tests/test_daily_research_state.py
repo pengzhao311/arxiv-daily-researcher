@@ -48,6 +48,17 @@ def _score():
     )
 
 
+def _unqualified_score():
+    score = _score()
+    return score.model_copy(
+        update={
+            "total_score": 1,
+            "is_qualified": False,
+            "reasoning": "not relevant enough",
+        }
+    )
+
+
 class _Agent:
     deep_template = {"modules": []}
 
@@ -113,6 +124,25 @@ class DailyResearchStateTests(unittest.TestCase):
             self.assertEqual(record["score_status"], "succeeded")
             self.assertEqual(record["translation_status"], "failed")
             self.assertIsNotNone(record["score_json"])
+
+    def test_unqualified_score_skips_translation_and_marks_not_required(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store = DailyResearchStore(Path(temp_dir) / "daily.db")
+            paper = _paper()
+            agent = _Agent(score_result=_unqualified_score())
+            run_id = store.start_run(1)
+
+            result = self._run_score_or_hydrate(
+                store, run_id, paper, agent, {"quantum": 1.0}
+            )
+
+            self.assertEqual(agent.score_calls, 1)
+            self.assertEqual(agent.translation_calls, 0)
+            self.assertEqual(result["abstract_cn"], "")
+            record = store.get_paper_record("arxiv", paper.paper_id)
+            self.assertEqual(record["score_status"], "succeeded")
+            self.assertEqual(record["translation_status"], "not_required")
+            self.assertIsNone(record["abstract_cn"])
 
     def test_qualified_score_is_automatically_favorited_when_enabled(self):
         with tempfile.TemporaryDirectory() as temp_dir, patch.object(

@@ -253,6 +253,20 @@ Screenshots use a current, sanitised test configuration. They contain no API key
 
 ## 🐳 Deployment
 
+### GitHub Pages and Private Archive Split
+
+After the daily Actions run, artifacts are published in two directions:
+
+| Target repository | Content | Purpose |
+| :--- | :--- | :--- |
+| `pengzhao311/pengzhao311.github.io` | Public HTML reports from the latest 30 days and `source/arxiv/index.html` | Public display |
+| `pengzhao311/quantum-lab` | Complete HTML/Markdown report history, gzip SQLite backups, private `papers-index-latest.json`, and monthly indexes | Long-term search, recovery, and internal knowledge curation |
+
+`PAGES_PAT` only needs Contents read/write access to `pengzhao311.github.io`. The private archive needs an additional
+`QUANTUM_LAB_PAT` with Contents read/write access to `pengzhao311/quantum-lab`; when it is not configured, the daily job skips the private archive step without blocking public site publishing.
+
+The current site configuration scores every candidate first, then runs abstract translation, later analysis, and report rendering only for qualified papers. Unqualified papers keep their score state for de-duplication, diagnostics, and future configuration changes.
+
 ### User Deployment: Root Compose <sup>Recommended</sup>
 
 The root `docker-compose.yml` is only for actual deployments. It pins the official images that match the v4.4 Release:

@@ -253,6 +253,20 @@ Docker 部署由 `config-panel` 提供服务。WebUI 与 worker 共享 `.env`、
 
 ## 🐳 部署方式
 
+### GitHub Pages 与私有归档分工
+
+每日 Actions 运行后会把产物分成两路：
+
+| 目标仓库 | 内容 | 用途 |
+| :--- | :--- | :--- |
+| `pengzhao311/pengzhao311.github.io` | 最近 30 天公开 HTML 报告、`source/arxiv/index.html` | 公开展示 |
+| `pengzhao311/quantum-lab` | 完整 HTML/Markdown 报告历史、SQLite gzip 备份、私有版 `papers-index-latest.json` 与月度索引 | 长期检索、恢复和组内知识沉淀 |
+
+`PAGES_PAT` 只需要授予 `pengzhao311.github.io` 的 Contents 读写权限。私有归档需要额外配置
+`QUANTUM_LAB_PAT`，只授予 `pengzhao311/quantum-lab` 的 Contents 读写权限；未配置时每日任务会跳过私有归档，不影响公开站点发布。
+
+当前站点配置会先评分所有候选论文，再只对及格论文执行摘要翻译、后续分析和报告展示；不及格论文只保留评分状态，用于去重、诊断和后续配置调整。
+
 ### 用户部署：根目录 Compose <sup>推荐</sup>
 
 根目录 `docker-compose.yml` 只用于实际部署，固定引用与 v4.4 Release 对应的官方镜像：

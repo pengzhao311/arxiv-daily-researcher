@@ -15,6 +15,8 @@ jobs:
   research:
     runs-on: ubuntu-latest
     timeout-minutes: 360
+    env:
+      PUBLIC_REPORT_RETENTION_DAYS: "30"
 
     steps:
       - name: Checkout repository
@@ -87,6 +89,43 @@ jobs:
             logs/
           retention-days: 30
 
+      - name: Archive full history to quantum-lab
+        if: always()
+        env:
+          ARCHIVE_PAT: ${{ secrets.QUANTUM_LAB_PAT }}
+        run: |
+          set -euo pipefail
+          if [ -z "${ARCHIVE_PAT:-}" ]; then
+            echo "QUANTUM_LAB_PAT is not configured; skipping private archive."
+            exit 0
+          fi
+
+          ARCHIVE=$(mktemp -d)
+          git clone --depth 1 \
+            "https://x-access-token:${ARCHIVE_PAT}@github.com/pengzhao311/quantum-lab.git" "$ARCHIVE"
+
+          python scripts/archive_quantum_lab.py --archive-root "$ARCHIVE"
+          if [ -f data/daily_research/daily_research.db ]; then
+            mkdir -p "$ARCHIVE/arxiv/exports"
+            python scripts/export_paper_index.py \
+              --db data/daily_research/daily_research.db \
+              --visibility private \
+              --output "$ARCHIVE/arxiv/exports/papers-index-latest.json"
+            cp "$ARCHIVE/arxiv/exports/papers-index-latest.json" \
+              "$ARCHIVE/arxiv/exports/papers-index-$(date -u +'%Y-%m').json"
+          fi
+
+          cd "$ARCHIVE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add arxiv
+          if git diff --cached --quiet; then
+            echo "No archive changes."
+          else
+            git commit -m "Archive arXiv research: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push origin main
+          fi
+
       - name: Publish reports to site (source branch)
         if: always()
         env:
@@ -102,7 +141,9 @@ jobs:
             cp -a data/reports/daily_research/html/. "$SITE/source/arxiv/reports/" || true
           fi
 
-          python scripts/build_site_index.py "$SITE/source/arxiv"
+          python scripts/build_site_index.py \
+            "$SITE/source/arxiv" \
+            --max-age-days "$PUBLIC_REPORT_RETENTION_DAYS"
 
           cd "$SITE"
           git config user.name "github-actions[bot]"

@@ -342,7 +342,14 @@ def _score_single_paper(
 
     if abstract_cn is None:
         abstract_cn = ""
-    if translate and abstract_cn == "" and paper.abstract and paper.abstract.strip():
+    should_translate = bool(
+        translate
+        and getattr(score_response, "is_qualified", False)
+        and abstract_cn == ""
+        and paper.abstract
+        and paper.abstract.strip()
+    )
+    if should_translate:
         abstract_hash = hashlib.md5(paper.abstract.encode("utf-8")).hexdigest()
 
         with cache_lock:
@@ -511,7 +518,11 @@ def _score_or_hydrate_paper(
         )
 
         record = store.get_paper_record(source, paper.paper_id)
-        translation_required = bool(paper.abstract and paper.abstract.strip())
+        translation_required = bool(
+            scored["score_response"].is_qualified
+            and paper.abstract
+            and paper.abstract.strip()
+        )
         translation_done = record["translation_status"] in ("succeeded", "not_required")
         if translation_required and not translation_done:
             abstract_hash = hashlib.md5(paper.abstract.encode("utf-8")).hexdigest()
